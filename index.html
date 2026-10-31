@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Tring — open-source cloud telephony</title>
-<meta name="description" content="Web, PSTN and WhatsApp calling, IVR, recording and programmable voice — self-hosted on your own infrastructure. AGPL licensed.">
+<meta name="description" content="Web, PSTN and WhatsApp calling, IVR, recording and programmable voice — self-hosted on your own infrastructure. Apache-2.0 licensed.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -39,7 +39,6 @@
   .wordmark { font-family: var(--serif); font-size: 23px; font-weight: 500; letter-spacing: -0.01em; }
   .nav-links { display: flex; align-items: center; gap: 30px; font-size: 15px; font-weight: 500; }
   .nav-links a { color: #3d4a44; }
-  .signin { font-size: 15px; font-weight: 600; color: var(--ink); }
 
   /* hero */
   .hero { padding-top: 56px; padding-bottom: 40px; display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 56px; align-items: center; }
@@ -144,8 +143,8 @@
 <body>
 
 <div class="ribbon">
-  <span>Tring is 100% open source (AGPL).</span>
-  <a href="#">Star us on GitHub &nbsp;★ 12.4k</a>
+  <span>Tring is 100% open source (Apache-2.0).</span>
+  <a href="https://github.com/shridarpatil/tring">Star us on GitHub<span id="gh-stars" hidden></span></a>
 </div>
 
 <nav class="wrap">
@@ -156,11 +155,9 @@
   <div class="nav-links">
     <a href="#how">How it works</a>
     <a href="#features">Features</a>
-    <a href="#">Docs</a>
-    <a href="#">Pricing</a>
-    <a href="#">GitHub</a>
+    <a href="https://shridarpatil.github.io/tring/">Docs</a>
+    <a href="https://github.com/shridarpatil/tring">GitHub</a>
   </div>
-  <a class="signin" href="#">Sign in</a>
 </nav>
 
 <header class="wrap hero">
@@ -168,10 +165,9 @@
     <div class="pill"><b>NEW</b> The open-source Exotel alternative</div>
     <h1>Cloud telephony you can<br><em>actually own.</em></h1>
     <p class="lede">Web, PSTN and WhatsApp calling, IVR, recording and programmable voice — self-hosted on your own infrastructure. No per-minute lock-in, no black box.</p>
-    <a class="btn-secondary" href="#"><span aria-hidden="true">★</span> View on GitHub</a>
+    <a class="btn-secondary" href="https://github.com/shridarpatil/tring"><span aria-hidden="true">★</span> View on GitHub</a>
     <div class="badges">
-      <span>SOC 2 &amp; HIPAA ready</span>
-      <span>99.99% uptime</span>
+      <span>Your data never leaves your servers</span>
       <span>Self-hosted</span>
     </div>
   </div>
@@ -184,9 +180,9 @@
         <span class="tag">WebRTC</span>
       </div>
       <div class="caller">
-        <div class="avatar">A</div>
+        <div class="avatar">J</div>
         <div>
-          <div class="caller-name">Aparna Rao</div>
+          <div class="caller-name">Jane Doe</div>
           <div class="caller-num">+91 98••• ••210</div>
         </div>
       </div>
@@ -284,7 +280,7 @@
       <div class="feat wide">
         <div class="icon" aria-hidden="true">🔓</div>
         <h3>Open &amp; self-hosted</h3>
-        <p>AGPL-licensed, no vendor lock-in. Audit every line and run it on infrastructure you control.</p>
+        <p>Apache-2.0 licensed, no vendor lock-in. Audit every line and run it on infrastructure you control.</p>
       </div>
     </div>
   </div>
@@ -303,30 +299,34 @@
       <div class="col">
         <strong>Product</strong>
         <a href="#features">Features</a>
-        <a href="#">Docs</a>
-        <a href="#">Pricing</a>
-        <a href="#">Changelog</a>
+        <a href="https://shridarpatil.github.io/tring/">Docs</a>
+        <a href="https://github.com/shridarpatil/tring/releases">Changelog</a>
       </div>
       <div class="col">
         <strong>Community</strong>
-        <a href="#">GitHub</a>
-        <a href="#">Discord</a>
+        <a href="https://github.com/shridarpatil/tring">GitHub</a>
         <a href="#">Contributing</a>
-      </div>
-      <div class="col">
-        <strong>Company</strong>
-        <a href="#">About</a>
-        <a href="#">Security</a>
       </div>
     </div>
   </div>
   <div class="legal">
     <div class="wrap">
-      <span>© 2026 Tring. AGPL licensed.</span>
-      <span>Privacy · Terms</span>
+      <span>© 2026 Tring. Apache-2.0 licensed.</span>
     </div>
   </div>
 </footer>
+
+<script>
+  fetch('https://api.github.com/repos/shridarpatil/tring')
+    .then(r => r.ok ? r.json() : Promise.reject(r.status))
+    .then(d => {
+      const n = d.stargazers_count;
+      const el = document.getElementById('gh-stars');
+      el.innerHTML = ' &nbsp;★ ' + (n >= 1000 ? (n / 1000).toFixed(1).replace(/\.0$/, '') + 'k' : n);
+      el.hidden = false;
+    })
+    .catch(() => {}); // leave the count hidden
+</script>
 
 </body>
 </html>
