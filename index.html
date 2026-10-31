@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tring — open-source cloud telephony</title>
+<meta name="description" content="Web, PSTN and WhatsApp calling, IVR, recording and programmable voice — self-hosted on your own infrastructure. AGPL licensed.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #F4F1EA; --card: #FBFAF6; --line: #E4DFD1; --line-2: #E0DACB;
+    --ink: #16211C; --muted: #48544e; --muted-2: #5b665f; --muted-3: #6b756f; --faint: #8a938d;
+    --green: #0F5C46; --green-2: #3f8a6f; --mint: #7fd8b8;
+    --serif: 'Newsreader', Georgia, 'Times New Roman', serif;
+    --sans: 'Hanken Grotesk', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    --mono: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--sans); -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+  ::selection { background: var(--green); color: var(--paper); }
+  a { color: var(--green); text-decoration: none; }
+  a:hover { color: #0a3f30; }
+  a:focus-visible, button:focus-visible { outline: 2px solid var(--green); outline-offset: 3px; border-radius: 6px; }
+  .wrap { max-width: 1180px; margin: 0 auto; padding-left: 32px; padding-right: 32px; }
+
+  /* ribbon */
+  .ribbon { background: var(--ink); color: var(--paper); font-size: 13.5px; text-align: center; padding: 9px 20px; font-weight: 500; }
+  .ribbon span { opacity: .7; }
+  .ribbon a { color: var(--paper); text-decoration: underline; text-underline-offset: 3px; margin-left: 8px; }
+
+  /* nav */
+  nav { padding-top: 22px; padding-bottom: 22px; display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+  .brand { display: flex; align-items: center; gap: 11px; color: var(--ink); }
+  .mark { width: 30px; height: 30px; border-radius: 9px; background: var(--green); display: flex; align-items: center; justify-content: center; }
+  .mark i { display: flex; align-items: flex-end; gap: 2.5px; height: 14px; }
+  .mark b { width: 3px; background: var(--paper); border-radius: 2px; display: block; }
+  .wordmark { font-family: var(--serif); font-size: 23px; font-weight: 500; letter-spacing: -0.01em; }
+  .nav-links { display: flex; align-items: center; gap: 30px; font-size: 15px; font-weight: 500; }
+  .nav-links a { color: #3d4a44; }
+  .signin { font-size: 15px; font-weight: 600; color: var(--ink); }
+
+  /* hero */
+  .hero { padding-top: 56px; padding-bottom: 40px; display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 56px; align-items: center; }
+  .pill { display: inline-flex; align-items: center; gap: 9px; background: #EAE6DA; border: 1px solid var(--line-2); border-radius: 100px; padding: 6px 13px 6px 8px; font-size: 13px; font-weight: 600; color: #3d4a44; margin-bottom: 28px; }
+  .pill b { background: var(--green); color: var(--paper); font-size: 11px; padding: 2px 7px; border-radius: 100px; letter-spacing: .04em; }
+  h1 { font-family: var(--serif); font-weight: 400; font-size: 60px; line-height: 1.03; letter-spacing: -0.02em; margin: 0 0 22px; text-wrap: balance; }
+  h1 em { color: var(--green); }
+  .lede { font-size: 19px; line-height: 1.55; color: var(--muted); margin: 0 0 34px; max-width: 480px; text-wrap: pretty; }
+  .btn-secondary { background: #EDE9DE; color: var(--ink); font-size: 16px; font-weight: 600; padding: 15px 24px; border-radius: 11px; border: 1px solid var(--line-2); display: inline-flex; align-items: center; gap: 10px; }
+  .btn-secondary:hover { color: var(--ink); background: #e6e1d3; }
+  .badges { display: flex; align-items: center; flex-wrap: wrap; gap: 10px 22px; margin-top: 30px; font-size: 13.5px; color: var(--muted-3); font-weight: 500; }
+  .badges span { display: inline-flex; align-items: center; gap: 7px; }
+  .badges span::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--green); }
+
+  /* product mock */
+  .mock-wrap { position: relative; }
+  .mock-glow { position: absolute; top: -24px; right: -24px; width: 180px; height: 180px; background: radial-gradient(circle at 70% 30%, rgba(15,92,70,.14), transparent 70%); filter: blur(6px); }
+  .mock { position: relative; background: var(--card); border: 1px solid var(--line); border-radius: 20px; padding: 22px; box-shadow: 0 30px 60px -30px rgba(22,33,28,.35), 0 2px 8px rgba(22,33,28,.05); }
+  .mock-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+  .live { display: flex; align-items: center; gap: 9px; font-size: 13px; font-weight: 600; color: #3d4a44; }
+  .live::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--green); animation: pulse 2s infinite; }
+  .tag { font-family: var(--mono); font-size: 11.5px; color: var(--faint); background: #F1EEE4; padding: 4px 9px; border-radius: 7px; }
+  .caller { display: flex; align-items: center; gap: 14px; margin-bottom: 22px; }
+  .avatar { width: 48px; height: 48px; border-radius: 14px; background: var(--green); display: flex; align-items: center; justify-content: center; color: var(--paper); font-weight: 700; font-size: 18px; font-family: var(--serif); }
+  .caller-name { font-weight: 700; font-size: 16px; }
+  .caller-num { font-size: 13px; color: var(--faint); font-family: var(--mono); }
+  .wave { display: flex; align-items: center; justify-content: center; gap: 3px; height: 56px; margin-bottom: 22px; background: #F6F3EA; border-radius: 12px; padding: 0 16px; }
+  .wave span { width: 3px; height: 100%; background: var(--green); border-radius: 3px; animation: wave 1.1s ease-in-out infinite; }
+  .wave span.alt { background: var(--green-2); }
+  .controls { display: flex; gap: 10px; }
+  .controls div { flex: 1; height: 44px; border-radius: 12px; background: #F1EEE4; display: flex; align-items: center; justify-content: center; color: #3d4a44; font-size: 18px; }
+  .controls .end { flex: 1.6; background: #c0392b; color: #fff; font-size: 15px; font-weight: 600; }
+  .snippet { position: absolute; bottom: -26px; left: -26px; width: 196px; background: var(--ink); color: var(--paper); border-radius: 14px; padding: 14px 16px; box-shadow: 0 20px 40px -20px rgba(22,33,28,.6); animation: float 5s ease-in-out infinite; font-family: var(--mono); font-size: 12px; line-height: 1.6; }
+  .k { color: var(--mint); } .f { color: #e6c07b; } .s { color: #9fd6ff; }
+
+  @keyframes wave { 0%,100% { transform: scaleY(.28); } 50% { transform: scaleY(1); } }
+  @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(15,92,70,.35); } 70% { box-shadow: 0 0 0 14px rgba(15,92,70,0); } 100% { box-shadow: 0 0 0 0 rgba(15,92,70,0); } }
+  @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+
+  /* sections */
+  .logos { padding-top: 34px; padding-bottom: 20px; text-align: center; }
+  .logos p { font-size: 12.5px; letter-spacing: .14em; text-transform: uppercase; color: var(--faint); font-weight: 600; margin: 0 0 22px; }
+  .logos .logo { font-size: 26px; font-weight: 700; letter-spacing: -0.01em; opacity: .55; }
+  .eyebrow { font-size: 13px; letter-spacing: .14em; text-transform: uppercase; color: var(--green); font-weight: 700; }
+  h2 { font-family: var(--serif); font-weight: 400; font-size: 42px; line-height: 1.1; letter-spacing: -0.02em; margin: 14px 0 0; }
+  .how { padding-top: 80px; padding-bottom: 60px; }
+  .how-head { text-align: center; max-width: 600px; margin: 0 auto 54px; }
+  .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+  .step { background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 30px; }
+  .step-num { font-family: var(--serif); font-size: 15px; font-weight: 500; color: var(--green); margin-bottom: 18px; }
+  .step h3 { font-size: 20px; font-weight: 700; margin: 0 0 10px; letter-spacing: -0.01em; }
+  .step p { font-size: 15px; line-height: 1.6; color: var(--muted-2); margin: 0; }
+
+  .features { background: var(--ink); color: var(--paper); }
+  .features .wrap { padding-top: 84px; padding-bottom: 84px; }
+  .features-head { max-width: 620px; margin-bottom: 52px; }
+  .features .eyebrow { color: var(--mint); }
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: rgba(244,241,234,.1); border: 1px solid rgba(244,241,234,.1); border-radius: 18px; overflow: hidden; }
+  .feat { background: var(--ink); padding: 30px; }
+  .feat.wide { grid-column: 1 / -1; }
+  .icon { width: 40px; height: 40px; border-radius: 11px; background: rgba(127,216,184,.14); display: flex; align-items: center; justify-content: center; margin-bottom: 18px; font-size: 19px; }
+  .feat h3 { font-size: 18px; font-weight: 700; margin: 0 0 9px; }
+  .feat p { font-size: 14.5px; line-height: 1.6; color: #a9b4ad; margin: 0; }
+
+  footer { border-top: 1px solid var(--line); }
+  .foot { padding-top: 48px; padding-bottom: 48px; display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 32px; }
+  .foot-brand { max-width: 260px; }
+  .foot-brand .brand { margin-bottom: 14px; }
+  .foot-brand p { font-size: 14px; color: var(--muted-3); line-height: 1.55; margin: 0; }
+  .cols { display: flex; gap: 56px; flex-wrap: wrap; }
+  .col { display: flex; flex-direction: column; gap: 11px; font-size: 14.5px; }
+  .col strong { color: var(--ink); margin-bottom: 3px; }
+  .col a { color: var(--muted-3); }
+  .col a:hover { color: var(--ink); }
+  .legal { border-top: 1px solid var(--line); }
+  .legal .wrap { padding-top: 20px; padding-bottom: 20px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; font-size: 13px; color: var(--faint); }
+
+  /* responsive */
+  @media (max-width: 960px) {
+    .nav-links { display: none; }
+    .hero { grid-template-columns: 1fr; gap: 64px; padding-top: 32px; }
+    h1 { font-size: 48px; }
+    .steps, .grid { grid-template-columns: 1fr 1fr; }
+    .steps .step:last-child { grid-column: 1 / -1; }
+  }
+  @media (max-width: 600px) {
+    .wrap { padding-left: 20px; padding-right: 20px; }
+    h1 { font-size: 40px; }
+    h2 { font-size: 32px; }
+    .lede { font-size: 17px; }
+    .steps, .grid { grid-template-columns: 1fr; }
+    .snippet { left: -8px; bottom: -34px; }
+    .how { padding-top: 64px; }
+    .features .wrap { padding-top: 64px; padding-bottom: 64px; }
+    .cols { gap: 36px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before { animation: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="ribbon">
+  <span>Tring is 100% open source (AGPL).</span>
+  <a href="#">Star us on GitHub &nbsp;★ 12.4k</a>
+</div>
+
+<nav class="wrap">
+  <a class="brand" href="#" aria-label="Tring home">
+    <span class="mark"><i><b style="height:60%"></b><b style="height:100%"></b><b style="height:45%"></b></i></span>
+    <span class="wordmark">tring</span>
+  </a>
+  <div class="nav-links">
+    <a href="#how">How it works</a>
+    <a href="#features">Features</a>
+    <a href="#">Docs</a>
+    <a href="#">Pricing</a>
+    <a href="#">GitHub</a>
+  </div>
+  <a class="signin" href="#">Sign in</a>
+</nav>
+
+<header class="wrap hero">
+  <div>
+    <div class="pill"><b>NEW</b> The open-source Exotel alternative</div>
+    <h1>Cloud telephony you can<br><em>actually own.</em></h1>
+    <p class="lede">Web, PSTN and WhatsApp calling, IVR, recording and programmable voice — self-hosted on your own infrastructure. No per-minute lock-in, no black box.</p>
+    <a class="btn-secondary" href="#"><span aria-hidden="true">★</span> View on GitHub</a>
+    <div class="badges">
+      <span>SOC 2 &amp; HIPAA ready</span>
+      <span>99.99% uptime</span>
+      <span>Self-hosted</span>
+    </div>
+  </div>
+
+  <div class="mock-wrap" aria-hidden="true">
+    <div class="mock-glow"></div>
+    <div class="mock">
+      <div class="mock-top">
+        <div class="live">Live call · 02:14</div>
+        <span class="tag">WebRTC</span>
+      </div>
+      <div class="caller">
+        <div class="avatar">A</div>
+        <div>
+          <div class="caller-name">Aparna Rao</div>
+          <div class="caller-num">+91 98••• ••210</div>
+        </div>
+      </div>
+      <div class="wave">
+        <span style="animation-delay:0s"></span>
+        <span style="animation-delay:.15s"></span>
+        <span style="animation-delay:.3s"></span>
+        <span class="alt" style="animation-delay:.45s"></span>
+        <span class="alt" style="animation-delay:.6s"></span>
+        <span style="animation-delay:.75s"></span>
+        <span style="animation-delay:.9s"></span>
+        <span class="alt" style="animation-delay:.55s"></span>
+        <span style="animation-delay:.2s"></span>
+        <span style="animation-delay:.7s"></span>
+      </div>
+      <div class="controls">
+        <div>⏸</div><div>●</div><div>⌗</div><div class="end">End</div>
+      </div>
+    </div>
+    <div class="snippet">
+      <span class="k">tring</span>.calls.<span class="f">create</span>({<br>
+      &nbsp;&nbsp;to: <span class="s">"+91…"</span>,<br>
+      &nbsp;&nbsp;record: <span class="s">true</span><br>
+      })
+    </div>
+  </div>
+</header>
+
+<section class="wrap logos">
+  <p>Powering call infrastructure for modern teams</p>
+  <span class="logo">Zerodha</span>
+</section>
+
+<section id="how" class="wrap how">
+  <div class="how-head">
+    <span class="eyebrow">How it works</span>
+    <h2>From clone to first call in an afternoon</h2>
+  </div>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">01</div>
+      <h3>Deploy on your cloud</h3>
+      <p>One command spins up Tring on AWS, GCP or bare metal. Bring your own SIP trunks and numbers.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">02</div>
+      <h3>Build with the SDK</h3>
+      <p>Place web calls with the JS SDK or drive PSTN flows with a REST API and visual IVR builder.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">03</div>
+      <h3>Scale &amp; own your data</h3>
+      <p>Recordings, logs and analytics stay in your VPC. Scale to millions of minutes at flat cost.</p>
+    </div>
+  </div>
+</section>
+
+<section id="features" class="features">
+  <div class="wrap">
+    <div class="features-head">
+      <span class="eyebrow">Everything in the box</span>
+      <h2>A complete telephony stack, not a wrapper</h2>
+    </div>
+    <div class="grid">
+      <div class="feat">
+        <div class="icon" aria-hidden="true">🌐</div>
+        <h3>Web-based calling</h3>
+        <p>Browser-native WebRTC calling with a drop-in softphone widget and full call controls.</p>
+      </div>
+      <div class="feat">
+        <div class="icon" aria-hidden="true">📞</div>
+        <h3>PSTN &amp; SIP</h3>
+        <p>Connect any carrier or SIP trunk. Inbound and outbound phone calls worldwide.</p>
+      </div>
+      <div class="feat">
+        <div class="icon" aria-hidden="true">💬</div>
+        <h3>WhatsApp calling</h3>
+        <p>Take and place WhatsApp Business voice calls over SIP, through the same IVR, queues and recording.</p>
+      </div>
+      <div class="feat">
+        <div class="icon" aria-hidden="true">🔀</div>
+        <h3>Programmable voice</h3>
+        <p>Script call flows in code or a visual IVR builder — routing, queues, callbacks.</p>
+      </div>
+      <div class="feat">
+        <div class="icon" aria-hidden="true">⏺</div>
+        <h3>Call recording</h3>
+        <p>Automatic recording of every call, stored entirely in your own bucket.</p>
+      </div>
+      <div class="feat">
+        <div class="icon" aria-hidden="true">📊</div>
+        <h3>Real-time analytics</h3>
+        <p>Live dashboards for call volume, quality and agent performance — no data leaves your VPC.</p>
+      </div>
+      <div class="feat wide">
+        <div class="icon" aria-hidden="true">🔓</div>
+        <h3>Open &amp; self-hosted</h3>
+        <p>AGPL-licensed, no vendor lock-in. Audit every line and run it on infrastructure you control.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap foot">
+    <div class="foot-brand">
+      <a class="brand" href="#" aria-label="Tring home">
+        <span class="mark" style="width:26px;height:26px;border-radius:8px"><i style="height:12px;gap:2px"><b style="height:60%;width:2.5px"></b><b style="height:100%;width:2.5px"></b><b style="height:45%;width:2.5px"></b></i></span>
+        <span class="wordmark" style="font-size:20px">tring</span>
+      </a>
+      <p>The open-source cloud telephony platform. Own your calls.</p>
+    </div>
+    <div class="cols">
+      <div class="col">
+        <strong>Product</strong>
+        <a href="#features">Features</a>
+        <a href="#">Docs</a>
+        <a href="#">Pricing</a>
+        <a href="#">Changelog</a>
+      </div>
+      <div class="col">
+        <strong>Community</strong>
+        <a href="#">GitHub</a>
+        <a href="#">Discord</a>
+        <a href="#">Contributing</a>
+      </div>
+      <div class="col">
+        <strong>Company</strong>
+        <a href="#">About</a>
+        <a href="#">Security</a>
+      </div>
+    </div>
+  </div>
+  <div class="legal">
+    <div class="wrap">
+      <span>© 2026 Tring. AGPL licensed.</span>
+      <span>Privacy · Terms</span>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
